@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A small local guide that tells you about the place around you"
+    />
+    <title>Local Guide</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="guide-card" aria-labelledby="page-title">
+        <p class="eyebrow">LOCAL GUIDE</p>
+        <h1 id="page-title">What is around here?</h1>
+        <p class="intro">
+          Let your surroundings tell their story. We will find your location,
+          look up nearby places, and read a few facts aloud.
+        </p>
+        <button id="guide-button" class="guide-button" type="button">
+          Tell me something about current location
+        </button>
+        <p id="guide-status" class="guide-status" aria-live="polite">
+          Ready when you are.
+        </p>
+        <div id="guide-results" class="guide-results" aria-live="polite" hidden>
+          <p class="result-label">YOU ARE NEAR</p>
+          <h2 id="place-name"></h2>
+          <ul id="fact-list"></ul>
+        </div>
+        <p class="attribution">
+          Place data from OpenStreetMap and facts from Wikipedia.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
