@@ -5,10 +5,10 @@ const placeName = document.querySelector("#place-name");
 const factList = document.querySelector("#fact-list");
 
 const reverseGeocodeUrl = (latitude, longitude) =>
-  `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`;
+  `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=nb`;
 
 const nearbyFactsUrl = (latitude, longitude) =>
-  `https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${latitude}|${longitude}&gsradius=10000&gslimit=3&format=json&origin=*`;
+  `https://no.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord=${latitude}|${longitude}&gsradius=10000&gslimit=3&format=json&origin=*`;
 
 const getPlaceName = (address) =>
   address.city ||
@@ -17,7 +17,7 @@ const getPlaceName = (address) =>
   address.municipality ||
   address.county ||
   address.state ||
-  "your current area";
+  "området ditt";
 
 const fetchFacts = async (latitude, longitude) => {
   const geosearchResponse = await fetch(nearbyFactsUrl(latitude, longitude));
@@ -29,7 +29,7 @@ const fetchFacts = async (latitude, longitude) => {
   const nearbyPlaces = query?.geosearch ?? [];
   const summaries = await Promise.all(
     nearbyPlaces.map(async ({ title }) => {
-      const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replaceAll(" ", "_"))}`;
+      const summaryUrl = `https://no.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replaceAll(" ", "_"))}`;
       const summaryResponse = await fetch(summaryUrl);
       if (!summaryResponse.ok) {
         return null;
@@ -49,7 +49,9 @@ const speak = (text) => {
   }
 
   window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "nb-NO";
+  window.speechSynthesis.speak(utterance);
   return true;
 };
 
@@ -79,7 +81,7 @@ guideButton.addEventListener("click", () => {
         const facts = await fetchFacts(latitude, longitude);
         const visibleFacts = facts.length
           ? facts
-          : [`This is ${location.display_name || name}.`];
+          : [`Du er ved ${location.display_name || name}.`];
 
         placeName.textContent = name;
         factList.replaceChildren(
@@ -90,9 +92,9 @@ guideButton.addEventListener("click", () => {
           }),
         );
         guideResults.hidden = false;
-        guideStatus.textContent = `Here is what I found near ${name}.`;
+        guideStatus.textContent = `Her er det jeg fant nær ${name}.`;
 
-        const narration = `You are near ${name}. ${visibleFacts.join(" ")}`;
+        const narration = `Du er nær ${name}. ${visibleFacts.join(" ")}`;
         if (!speak(narration)) {
           guideStatus.textContent +=
             " Your browser does not support spoken audio.";
